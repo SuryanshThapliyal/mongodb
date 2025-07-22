@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
+import {User} from './db.js';
 
-mongoose.connect('mongodb://localhost:27017/mydatabase', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
+mongoose.connect('mongodb://localhost:27017/mydatabase')
 .then(()=> {
     console.log('Connected to MongoDB');
 })
@@ -12,23 +11,18 @@ mongoose.connect('mongodb://localhost:27017/mydatabase', {
 })
 
 
-const userSchema = new mongoose.Schema({
-    name: String,
-    age:Number,
-    isDev: Boolean
-});
-
-const User = mongoose.model('User', userSchema);
-
-const user = new User({
-    name: "yajat",
-    age: 20,
-    isDev: true
-});
-user.save()
-.then(() => {
-    console.log('User saved successfully');
+User.create({
+    id: uuidv4(),
+    name : 'suryansh thapliyal',
+    email: 'suryansh@exame.com',
+    age: 25,
+    hobbies: ['reading', 'gaming'],
+    isVerified: true
 })
-.catch(err => {
-    console.error('Error saving user:', err);
+.then((user) => console.log('User created:', user))
+.catch((err) => {
+    if (err.code === 11000) {
+        console.error('Error: Duplicate key error. User with this email already exists.');
+    }else 
+    console.error('Error creating user:', err)
 });
