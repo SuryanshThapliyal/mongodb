@@ -1,31 +1,22 @@
-import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
-import {Book, Author} from './db.js';
+import mongoose from "mongoose";
+import express from "express";
+import authorRoutes from './routes/author.js';
+import bookRoutes from './routes/books.js';
 
-mongoose.connect('mongodb://localhost:27017/mydatabase')
-.then(()=> {
-    console.log('Connected to MongoDB');
+const app = express();
+app.use(express.json());
+
+mongoose.connect('mongodb://localhost:27017/library')
+.then(() => {
+    console.log("Connected to MongoDB");
 })
-.catch(err=> {
-    console.error('Error connecting to MongoDB:', err);
-})
+.catch(err => {
+    console.error("Failed to connect to MongoDB", err);
+});
 
-const id = "687f537154352c3bdd58994c";
-const newAuthor= await Author.findById(id)
-console.log(newAuthor);
+app.use('/authors', authorRoutes);
+app.use('/books', bookRoutes);
 
-let newBook;
-try{
-newBook= await Book.create({
-    title: "gidagedigedagadado",
-    genre: "fiction",
-    author: [newAuthor._id]
-})
-console.log('New book created:', newBook);
-}
-catch(err) {
-    console.error('Error creating book:', err);
-}
-
-const findBooksByAuthor = await Book.find({author:[newAuthor._id]}).populate('author');
-console.log('Books by author:', findBooksByAuthor);
+app.listen(3000, () => {
+    console.log('Server is running on port ${http://localhost:3000}');
+});
