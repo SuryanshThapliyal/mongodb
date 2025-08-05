@@ -12,6 +12,11 @@ await mongoose.connect(process.env.MONGODB_URI)
 console.log('Connected to MongoDB');
 
 
+app.get('/transfer', async (req, res) => {
+    res.json(await Account.find({}));
+});
+
+
 app.post('/transfer', async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -24,7 +29,9 @@ app.post('/transfer', async (req, res) => {
         if (!fromAccount || !toAccount) {
             throw new Error(' Invalid account');
         }
-
+        if (fromAccount.balance < amount) {
+            throw new Error('Insufficient balance');
+        }
         fromAccount.balance -= amount;
         toAccount.balance += amount;
 
