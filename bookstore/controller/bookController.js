@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import {Book} from '../models/book.js';
+import { Aggregate } from 'mongoose';
 
 export const createBook = async (req, res) => {
     const { title, author, price, genre, inStock } = req.body;
@@ -22,7 +23,12 @@ export const createBook = async (req, res) => {
 
 export const getBooks = async (req, res) => {
     try {
-        const books = await Book.find({})
+        const {title, author, genre} = req.query;
+        const books = await Book.find({
+            $or:[
+                {title:title}, {author: author}, {genre: genre}
+            ]
+    })
         res.status(200).json(books);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching books', error: error.message });
@@ -57,3 +63,11 @@ export const deleteBook = async (req, res) => {
         res.status(500).json({error: err.message})
     }
 }
+
+export const aggregate = async (req, res) => {
+    const pipeline = [
+        {count: "totalbooks" } 
+    ]
+    const result = Book.ggregate(pipeline);
+
+};

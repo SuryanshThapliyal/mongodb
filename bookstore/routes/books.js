@@ -12,6 +12,7 @@ router.put('/books/:id', updateBook);
 
 router.delete('/books/:id', deleteBook);
 
+router.get('/books', aggregate);
 
 
 
