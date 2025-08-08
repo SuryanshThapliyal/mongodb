@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import express from 'express';
-import { createBook, deleteBook, getBooks, updateBook } from '../controller/bookController.js';
+import { createBook, deleteBook, getBooks, updateBook, aggregate } from '../controller/bookController.js';
 const router = express.Router();
 router.use(express.json());
 
@@ -12,7 +12,7 @@ router.put('/books/:id', updateBook);
 
 router.delete('/books/:id', deleteBook);
 
-router.get('/books', aggregate);
+router.get('/books/aggre', aggregate);
 
 
 

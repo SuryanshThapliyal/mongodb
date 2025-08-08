@@ -65,9 +65,28 @@ export const deleteBook = async (req, res) => {
 }
 
 export const aggregate = async (req, res) => {
-    const pipeline = [
-        {count: "totalbooks" } 
-    ]
-    const result = Book.ggregate(pipeline);
+    
+    const result = await Book.aggregate( [
+        {$facet: {
+            genreWise: [{$group: {
+                _id: "$genre",
+                count: {$sum: 1}
+            }}],
+            count: [
+                {$count: "totalbooks" },
+            ],
+            inStockCount: [
+                {$match: {inStock: true}},
+                {
+                    $group:{
+                        _id: "$inStock",
+                        count: {$sum: 1}
+                    }
+                }
+            ]
+        }
+        
+}]);
+    res.json(result);
 
 };
